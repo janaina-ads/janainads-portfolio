@@ -1,90 +1,67 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Portfólio - ADS</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #f4f4f4;
-        }
+    <title>Portfólio</title> 
+    <link rel="stylesheet" href="style.css">
+</head>
 
-        header {
-            background-color: #1f2937;
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
+<body>
+   
+    <link rel="stylesheet" href="../css/style.css">
 
-        section {
-            background-color: white;
-            margin: 20px;
-            padding: 20px;
-            border-radius: 8px;
-        }
 
-        h2 {
-            color: #1f2937;
-        }
-
-        ul {
-            padding-left: 20px;
-        }
-
-        footer {
-            background-color: #1f2937;
-            color: white;
-            text-align: center;
-            padding: 10px;
-        }
-    </style>
 </head>
 <body>
 
-<header>
-    <h1>Seu Nome</h1>
-    <p>Tecnóloga em Análise e Desenvolvimento de Sistemas</p>
-</header>
+    <header class="topo">
+        <h1>Janaína Sausen</h1>
+        <p>Estudante de Análise e Desenvolvimento de Sistemas</p>
+    </header>
 
-<section>
-    <h2>Sobre mim</h2>
-    <p>
-        Sou estudante de Análise e Desenvolvimento de Sistemas, com interesse em
-        desenvolvimento de software e aprendizado contínuo. Tenho experiência
-        com projetos acadêmicos e práticos.
-    </p>
-</section>
-<section>
-    <h2>Projetos</h2>
-    <ul>
-        <li>Sistema de cadastro em Java (POO)</li>
-        <li>Projeto de controle de caixa (acadêmico)</li>
-        <li>Wireframe de sistema (UX)</li>
-        <li>Site portfólio em HTML e CSS</li>
-    </ul>
-</section>
+    <main class="container">
 
-<section>
-    <h2>Conhecimentos</h2>
-    <ul>
-        <li>Java</li>
-        <li>Lógica de Programação</li>
-        <li>HTML e CSS</li>
-        <li>Banco de Dados (básico)</li>
-        <li>UX / Wireframes</li>
-    </ul>
-</section>
+        <section class="card">
+            <h2>Sobre mim</h2>
+            <p>
+                Sou estudante de Análise e Desenvolvimento de Sistemas, com interesse
+                em desenvolvimento de software e aprendizado contínuo.
+            </p>
+        </section>
 
-<section>
-    <h2>Contato</h2>
-    <p>Email: rogeraguilarrosa@gmail.com</p>
-    <p>LinkedIn: www.linkedin.com/in/janaína-sausen-564a9b228</p>
-</section>
+        <section class="card">
+            <h2>Projetos</h2>
+            <ul>
+                <li>Sistema de cadastro em Java (POO)</li>
+                <li>Projeto de controle de caixa (acadêmico)</li>
+                <li>Wireframe de sistema (UX)</li>
+                <li>Site portfólio em HTML e CSS</li>
+            </ul>
+        </section>
 
-<footer>
-    <p>© 2026 - Portfólio Acadêmico</p>
-</footer>
+        <section class="card">
+            <h2>Conhecimentos</h2>
+            <div class="tags">
+                <span>Java</span>
+                <span>Lógica</span>
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>Banco de Dados</span>
+                <span>UX</span>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Contato</h2>
+            <p>📧 Email: rogeraguilarrosa@gmail.com</p>
+            <p>🔗 LinkedIn: Acessar perfil</p>
+        </section>
+
+    </main>
+
+    <footer class="rodape">
+        <p>© 2026 • Portfólio Acadêmico</p>
+    </footer>
 
 </body>
 </html>

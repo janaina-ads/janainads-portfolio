@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio da Jana</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding-bottom: 230px;
+            color: #333;
+        }
+
+        h1 {
+            background: #25D366;
+            color: white;
+            padding: 18px;
+            margin: 0;
+            text-align: center;
+        }
+
+        #info-mesa {
+            text-align: center;
+            padding: 10px;
+            color: #444;
+            background: #e8fdf0;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .categorias {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            overflow-x: auto;
+        }
+
+        .categorias button {
+            background: #eee;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .container {
+            padding: 12px;
+            max-width: 700px;
+            margin: auto;
+        }
+
+        /* CARDS DOS PRODUTOS */
+
+        .produto {
+            background: white;
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .produto.selecionado {
+            border-color: #25D366;
+            background: #e8fdf0;
+        }
+
+        .produto-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .produto-info h2 {
+            margin: 0 0 6px 0;
+            font-size: 21px;
+        }
+
+        .preco {
+            font-size: 18px;
+            font-weight: bold;
+            color: #128C7E;
+            margin: 0 0 7px 0;
+        }
+
+        .descricao {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .produto img {
+            width: 125px;
+            height: 105px;
+            object-fit: cover;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .botao-produto {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        /* ÁREA DOS ADICIONAIS */
+
+        #area-adicionais {
+            display: none;
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+        }
+
+        #produto-escolhido {
+            background: #e8fdf0;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        #extras label {
+            display: block;
+            background: #f8f8f8;
+            padding: 14px;
+            margin-bottom: 7px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        /* OBSERVAÇÃO */
+
+        .titulo-observacao {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        #observacao {
+            width: 100%;
+            min-height: 75px;
+            resize: vertical;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 15px;
+        }
+
+        .btn-carrinho {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .btn-cancelar {
+            background: #ddd;
+            color: #333;
+            border: none;
+            padding: 11px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        /* CARRINHO */
+
+        #carrinho {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            padding: 12px 15px;
+            border-top: 2px solid #ddd;
+            z-index: 999;
+            box-shadow: 0 -3px 10px rgba(0,0,0,0.08);
+        }
+
+        #lista {
+            max-height: 105px;
+            overflow-y: auto;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .item-carrinho {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .nome-item {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .controles {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .controles button {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #eee;
+        }
+
+        .quantidade {
+            min-width: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .preco-item {
+            font-weight: bold;
+            min-width: 75px;
+            text-align: right;
+        }
+
+        #carrinho p {
+            margin: 8px 0;
+        }
+
+        #finalizar {
+            background: #128C7E;
+            color: white;
+            border: none;
+            padding: 13px;
+            border-radius: 8px;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        @media (max-width: 500px) {
+
+            .produto img {
+                width: 115px;
+                height: 100px;
+            }
+
+            .produto-info h2 {
+                font-size: 19px;
+            }
+
+            .descricao {
+                font-size: 13px;
+            }
+
+            .preco {
+                font-size: 17px;
+            }
+
+            .item-carrinho {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>🍔 Lanchonete da Jana</h1>
+
+<div id="info-mesa"></div>
+
+<div class="categorias">
+    <button onclick="mostrar('lanches')">🍔 Lanches</button>
+    <button onclick="mostrar('bebidas')">🥤 Bebidas</button>
+</div>
+
+<div class="container">
+
+    <!-- ÁREA DOS ADICIONAIS E OBSERVAÇÃO -->
+
+    <div id="area-adicionais">
+
+        <div id="produto-escolhido"></div>
+
+        <h2>➕ Escolha seus adicionais</h2>
+
+        <div id="extras">
+
+            <label>
+                <input type="checkbox"
+                       class="extra-item"
+                       value="Queijo"
+                       data-preco="2">
+                🧀 Queijo (+R$ 2,00)
+            </label>
+
+            <label>
+                <input type="checkbox"
+                       class="extra-item"
+                       value="Bacon"
+                       data-preco="3">
+                🥓 Bacon (+R$ 3,00)
+            </label>
+
+            <label>
+                <input type="checkbox"
+                       class="extra-item"
+                       value="Ovo"
+                       data-preco="2">
+                🥚 Ovo (+R$ 2,00)
+            </label>
+
+        </div>
+
+        <label class="titulo-observacao">
+            📝 Alguma observação?
+        </label>
+
+        <textarea
+            id="observacao"
+            placeholder="Ex.: sem maionese, sem cebola, pouco sal..."></textarea>
+
+        <button class="btn-carrinho"
+                onclick="confirmarItem()">
+            🛒 ADICIONAR AO CARRINHO
+        </button>
+
+        <button class="btn-cancelar"
+                onclick="cancelarEscolha()">
+            Voltar
+        </button>
+
+    </div>
+
+
+    <!-- LANCHES -->
+
+    <div id="lanches">
+
+        <!-- BAURU -->
+
+        <div class="produto"
+             data-categoria="lanche">
+
+            <div class="produto-info">
+
+                <h2>🥪 Bauru</h2>
+
+                <p class="preco">R$ 14,00</p>
+
+                <p class="descricao">
+                    Pão, carne, queijo e ovo
+                </p>
+
+                <button class="botao-produto"
+                        onclick="selecionarProduto(event, this)">
+                    ESCOLHER
+                </button>
+
+            </div>
+
+            <img src="xis-bauru.png"
+                 alt="Bauru">
+
+        </div>
+
+
+        <!-- X-BURGER -->
+
+        <div class="produto"
+             data-categoria="lanche">
+
+            <div class="produto-info">
+
+                <h2>🍔 X-Burger</h2>
+
+                <p class="preco">R$ 15,00</p>
+
+                <p class="descricao">
+                    Pão, queijo e maionese
+                </p>
+
+                <button class="botao-produto"
+                        onclick="selecionarProduto(event, this)">
+                    ESCOLHER
+                </button>
+
+            </div>
+
+            <img
+                src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=500"
+                alt="X-Burger">
+
+        </div>
+
+    </div>
+
+
+    <!-- BEBIDAS -->
+
+    <div id="bebidas" style="display:none">
+
+        <div class="produto"
+             data-categoria="bebida">
+
+            <div class="produto-info">
+
+                <h2>🥤 Coca-Cola</h2>
+
+                <p class="preco">R$ 8,00</p>
+
+                <p class="descricao">
+                    Coca-Cola gelada
+                </p>
+
+                <button class="botao-produto"
+                        onclick="adicionarBebida(event, this)">
+                    🛒 ADICIONAR AO CARRINHO
+                </button>
+
+            </div>
+
+            <img
+                src="https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=500"
+                alt="Coca-Cola">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- CARRINHO -->
+
+<div id="carrinho">
+
+    <ul id="lista"></ul>
+
+    <p>
+        <strong>
+            Total: R$ <span id="valor-total">0,00</span>
+        </strong>
+    </p>
+
+    <button id="finalizar"
+            onclick="finalizarNoWhats()">
+        📲 Pedir no WhatsApp
+    </button>
+
+</div>
+
+
+<script>
+
+    // -------------------------
+    // MESA
+    // -------------------------
+
+    const urlParams =
+        new URLSearchParams(window.location.search);
+
+    const numeroMesa =
+        urlParams.get('mesa') || "Não informada";
+
+
+    window.onload = function() {
+
+        if(numeroMesa !== "Não informada") {
+
+            document.getElementById("info-mesa").innerHTML =
+                "📍 <b>Mesa: " + numeroMesa + "</b>";
+
+        }
+
+    };
+
+
+    // -------------------------
+    // CARRINHO
+    // -------------------------
+
+    let carrinho = [];
+
+    let itemPendente = null;
+
+
+    // -------------------------
+    // CATEGORIAS
+    // -------------------------
+
+    function mostrar(id) {
+
+        document.getElementById("lanches").style.display = "none";
+
+        document.getElementById("bebidas").style.display = "none";
+
+        document.getElementById(id).style.display = "block";
+
+        fecharAdicionais();
+
+    }
+
+
+    // -------------------------
+    // ESCOLHER LANCHE
+    // -------------------------
+
+    function selecionarProduto(event, botao) {
+
+        event.stopPropagation();
+
+        const card =
+            botao.closest(".produto");
+
+        const nome =
+            card.querySelector("h2").innerText;
+
+        const preco =
+            parseFloat(
+                card.querySelector(".preco")
+                    .innerText
+                    .replace("R$", "")
+                    .replace(",", ".")
+            );
+
+        const descricao =
+            card.querySelector(".descricao").innerText;
+
+
+        itemPendente = {
+            nome,
+            preco,
+            descricao
+        };
+
+
+        document.querySelectorAll(".produto")
+            .forEach(p =>
+                p.classList.remove("selecionado")
+            );
+
+
+        card.classList.add("selecionado");
+
+
+        document.getElementById("produto-escolhido").innerHTML =
+            "🥪 <b>" +
+            nome +
+            "</b> — R$ " +
+            preco.toFixed(2).replace(".", ",");
+
+
+        document.getElementById("observacao").value = "";
+
+
+        document.getElementById("area-adicionais").style.display =
+            "block";
+
+
+        document.getElementById("area-adicionais")
+            .scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+    }
+
+
+    // -------------------------
+    // CONFIRMAR LANCHE
+    // -------------------------
+
+    function confirmarItem() {
+
+        if(!itemPendente) return;
+
+
+        let extrasNomes = [];
+
+        let valorExtras = 0;
+
+
+        const checkboxes =
+            document.querySelectorAll(
+                ".extra-item:checked"
+            );
+
+
+        checkboxes.forEach(item => {
+
+            extrasNomes.push(item.value);
+
+            valorExtras +=
+                parseFloat(
+                    item.getAttribute("data-preco")
+                );
+
+            item.checked = false;
+
+        });
+
+
+        const observacao =
+            document.getElementById("observacao")
+                .value.trim();
+
+
+        let nomeFinal =
+            itemPendente.nome;
+
+
+        if(extrasNomes.length > 0) {
+
+            nomeFinal +=
+                " + " +
+                extrasNomes.join(", ");
+
+        }
+
+
+        if(observacao !== "") {
+
+            nomeFinal +=
+                " (" +
+                observacao +
+                ")";
+
+        }
+
+
+        adicionarAoCarrinho(
+            nomeFinal,
+            itemPendente.preco + valorExtras
+        );
+
+
+        itemPendente = null;
+
+
+        document.getElementById("observacao").value = "";
+
+
+        document.querySelectorAll(".produto")
+            .forEach(p =>
+                p.classList.remove("selecionado")
+            );
+
+
+        fecharAdicionais();
+
+    }
+
+
+    // -------------------------
+    // COCA-COLA
+    // -------------------------
+
+    function adicionarBebida(event, botao) {
+
+        event.stopPropagation();
+
+        const card =
+            botao.closest(".produto");
+
+        const nome =
+            card.querySelector("h2").innerText;
+
+        const preco =
+            parseFloat(
+                card.querySelector(".preco")
+                    .innerText
+                    .replace("R$", "")
+                    .replace(",", ".")
+            );
+
+
+        adicionarAoCarrinho(nome, preco);
+
+    }
+
+
+    // -------------------------
+    // ADICIONAR AO CARRINHO
+    // -------------------------
+
+    function adicionarAoCarrinho(nome, preco) {
+
+        const existente =
+            carrinho.find(
+                item => item.nome === nome
+            );
+
+
+        if(existente) {
+
+            existente.quantidade++;
+
+        } else {
+
+            carrinho.push({
+
+                nome: nome,
+
+                preco: preco,
+
+                quantidade: 1
+
+            });
+
+        }
+
+
+        atualizarTela();
+
+    }
+
+
+    // -------------------------
+    // AUMENTAR QUANTIDADE
+    // -------------------------
+
+    function aumentarQuantidade(index) {
+
+        carrinho[index].quantidade++;
+
+        atualizarTela();
+
+    }
+
+
+    // -------------------------
+    // DIMINUIR QUANTIDADE
+    // -------------------------
+
+    function diminuirQuantidade(index) {
+
+        carrinho[index].quantidade--;
+
+
+        if(carrinho[index].quantidade <= 0) {
+
+            carrinho.splice(index, 1);
+
+        }
+
+
+        atualizarTela();
+
+    }
+
+
+    // -------------------------
+    // ATUALIZAR CARRINHO
+    // -------------------------
+
+    function atualizarTela() {
+
+        const lista =
+            document.getElementById("lista");
+
+        lista.innerHTML = "";
+
+
+        let totalGeral = 0;
+
+
+        carrinho.forEach((item, index) => {
+
+            const totalItem =
+                item.preco * item.quantidade;
+
+
+            totalGeral += totalItem;
+
+
+            const li =
+                document.createElement("li");
+
+
+            li.className =
+                "item-carrinho";
+
+
+            li.innerHTML = `
+
+                <span class="nome-item">
+                    ${item.nome}
+                </span>
+
+                <div class="controles">
+
+                    <button
+                        onclick="diminuirQuantidade(${index})">
+                        −
+                    </button>
+
+                    <span class="quantidade">
+                        ${item.quantidade}
+                    </span>
+
+                    <button
+                        onclick="aumentarQuantidade(${index})">
+                        +
+                    </button>
+
+                </div>
+
+                <span class="preco-item">
+                    R$ ${totalItem.toFixed(2).replace(".", ",")}
+                </span>
+
+            `;
+
+
+            lista.appendChild(li);
+
+        });
+
+
+        document.getElementById("valor-total")
+            .innerText =
+                totalGeral
+                    .toFixed(2)
+                    .replace(".", ",");
+
+    }
+
+
+    // -------------------------
+    // FECHAR ADICIONAIS
+    // -------------------------
+
+    function fecharAdicionais() {
+
+        document.getElementById("area-adicionais")
+            .style.display = "none";
+
+    }
+
+
+    // -------------------------
+    // CANCELAR
+    // -------------------------
+
+    function cancelarEscolha() {
+
+        document.querySelectorAll(".extra-item")
+            .forEach(item =>
+                item.checked = false
+            );
+
+
+        document.getElementById("observacao").value = "";
+
+
+        itemPendente = null;
+
+
+        document.querySelectorAll(".produto")
+            .forEach(p =>
+                p.classList.remove("selecionado")
+            );
+
+
+        fecharAdicionais();
+
+    }
+
+
+    // -------------------------
+    // WHATSAPP
+    // -------------------------
+
+    function finalizarNoWhats() {
+
+        if(carrinho.length === 0) {
+
+            alert("Carrinho vazio!");
+
+            return;
+
+        }
+
+
+        const fone =
+            "53999816127";
+
+
+        let msg =
+            "*PEDIDO DA MESA: " +
+            numeroMesa +
+            "*\n";
+
+
+        msg +=
+            "------------------------------\n\n";
+
+
+        carrinho.forEach(item => {
+
+            const totalItem =
+                item.preco * item.quantidade;
+
+
+            msg +=
+                item.nome +
+                " x" +
+                item.quantidade +
+                " - R$ " +
+                totalItem
+                    .toFixed(2)
+                    .replace(".", ",") +
+                "\n";
+
+        });
+
+
+        const totalGeral =
+            carrinho.reduce(
+                (total, item) =>
+                    total +
+                    item.preco *
+                    item.quantidade,
+                0
+            );
+
+
+        msg +=
+            "\n*Total: R$ " +
+            totalGeral
+                .toFixed(2)
+                .replace(".", ",") +
+            "*";
+
+
+        window.open(
+            "https://wa.me/" +
+            fone +
+            "?text=" +
+            encodeURIComponent(msg)
+        );
+
+    }
+
+</script>
+
+</body>
+</html>
